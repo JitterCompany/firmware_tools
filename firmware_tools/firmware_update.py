@@ -175,15 +175,14 @@ class Program:
         args = self.parser.parse_args()
         self.args = args
 
-        updates = []
+        updates = {}
         if not args.config is None:
             try:
                 with open(args.config, 'r') as cfg:
                     for line in cfg.readlines():
                         opts = line.split()
-                        updates.append({
-                            'firmware':   opts[0],
-                            })
+                        updates[opts[3]] = opts[0]
+
             except IOError:
                 print("ERROR: failed to open config file '%s'"
                         % args.config)
@@ -203,12 +202,8 @@ class Program:
                 self.parser.print_usage()
                 sys.exit()
             else:
-                updates.append({
-                    'firmware':   args.firmware,
-                    })
-                updates.append({
-                    'firmware':   args.firmware2,
-                    })
+                updates['43xx_m0'] = args.firmware
+                updates['43xx_m4'] = args.firmware2
 
         return updates
 
@@ -217,18 +212,18 @@ class Program:
         
         updates = self.parse_args()
         
-        files = []
-        for update in updates:
-            f = update['firmware']
+        files = {}
+        for key in updates:
+            f = updates[key]
             if not os.path.isfile(f):
                 print("ERROR: {} is not a file".format(f))
                 self.parser.print_usage()
                 sys.exit()
 
-            files.append(f)
+            files[key] = f
 
 
-        update = Update(files[0], files[1], self.args.ip, self.args.port)
+        update = Update(files['43xx_m0'], files['43xx_m4'], self.args.ip, self.args.port)
         update.upload()
 
 if __name__ == "__main__":
