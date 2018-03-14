@@ -136,7 +136,10 @@ class Update:
                 # send update commands
                 commands = []
                 commands.append("update_devices=" + list_to_str(to_update))
-                commands.append("fw_m0=" + self.firmware_file_m0)
+                if self.firmware_file_m0 is not None:
+                    commands.append("fw_m0=" + self.firmware_file_m0)
+                else:
+                    print("Note: no m0 firmware found")
                 commands.append("fw_m4=" + self.firmware_file_m4)
                 sock.sendall(encode(list_to_str(commands, '\n')))
                 
@@ -212,7 +215,7 @@ class Program:
         
         updates = self.parse_args()
         
-        files = {}
+        files = {'43xx_m0': None}
         for key in updates:
             f = updates[key]
             if not os.path.isfile(f):
