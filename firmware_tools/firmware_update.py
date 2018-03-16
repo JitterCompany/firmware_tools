@@ -144,7 +144,7 @@ class Update:
                 sock.sendall(encode(list_to_str(commands, '\n')))
                 
                 # get list of updated devices
-                if not self.parse_incoming(sock, 10):
+                if not self.parse_incoming(sock, 2+10*len(to_update)):
                     return
 
                 self.ui_result()
